@@ -9,7 +9,7 @@ from os.path import exists
 SOURCE_NAME = 'hads'
 #MASTER_DIR = r'/home/kodamak8/nrt_testing/relhum_test/'
 MASTER_DIR = r'/home/hawaii_climate_products_container/preliminary/'
-PARSE_DIR = r'/home/hawaii_climate_products_container/preliminary/data_aqs/data_outputs/' + SOURCE_NAME + r'/parse/'
+PARSE_DIR = r'/home/hawaii_climate_products_container/preliminary/relhum/working_data/data_aqs/' + SOURCE_NAME + r'/parse/'
 PROCESS_DIR = MASTER_DIR + r'relhum/working_data/processed_data/'
 TRACK_DIR = MASTER_DIR + r'relhum/data_outputs/tables/relhum_station_tracking/'
 RH_VAR = 'XR'
@@ -38,6 +38,12 @@ def inverse_rh(rh,ta):
     frac = vp/a
     td = c*np.log(frac)/(b - np.log(frac))
     return td
+
+def compute_rh(vp,es):
+    rh_pre = 100*vp/es
+    inds = np.where(rh_pre>100)
+    rh_pre[inds] = 100
+    return rh_pre
 
 def vapor_pressure(td):
     c1 = 6.1078
