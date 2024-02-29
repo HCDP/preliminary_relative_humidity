@@ -2,7 +2,7 @@
     "comment": "T_max Partially-Filled Data - Daily",
     "download_base_url": "https://ikeauth.its.hawaii.edu/files/v2/download/public/system/ikewai-annotated-data/HCDP",
     "download": [
-        "/production/relative_humidity/max/day/statewide/partial/station_data/%y/%m/relative_humidity_day_statewide_partial_station_data_%y_%m.csv"
+        "/production/relative_humidity/day/statewide/partial/station_data/%y/%m/relative_humidity_day_statewide_partial_station_data_%y_%m.csv"
     ],
     "tapis_config": {
         "tenant_url": "https://agaveauth.its.hawaii.edu/meta/v2/data",
