@@ -121,7 +121,7 @@
                 }
             ]
         },{
-            "local_path": "/home/hawaii_climate_products_container/preliminary/relhum/data_outputs/metadata/daily/county/OA/%y%m%d_RH_MN_meta.txt",
+            "local_path": "/home/hawaii_climate_products_container/preliminary/relhum/data_outputs/metadata/daily/county/OA/%y%m%d_RH_OA_meta.txt",
             "remote_path": "HCDP/production/relative_humidity/day/oa/metadata/%y/%m",
             "rename": "relative_humidity_day_oa_metadata_%y_%m_%d.txt",
             "system_id": "ikewai-annotated-data",
