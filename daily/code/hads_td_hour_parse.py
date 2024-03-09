@@ -1,3 +1,4 @@
+import os
 import sys
 import pytz
 import numpy as np
@@ -73,57 +74,65 @@ def get_max_counts(temp_df,uni_stns):
 def get_hour_td(date_str,hour=HOUR_DEFAULT):
     #Load parsed HADS data
     data_file = PARSE_DIR + '_'.join((''.join(date_str.split('-')),SOURCE_NAME,'parsed')) + '.csv'
-    df = pd.read_csv(data_file)
-    #Get pre-existing TD measurements, if any
-    td_df = df[df['var'].isin([TD_VAR])]
-    td_df['value'] = td_df['value'].apply(to_celsius)
-    #(More likely) Convert RH to TD using TA
-    ta_df = df[df['var'].isin([TA_VAR])]
-    rh_df = df[df['var'].isin([RH_VAR])]
-    rh_ta_df = rh_df.merge(ta_df,on=MERGE_COLS,how='inner').rename(columns={'value_x':'XR','value_y':'TA'})
-    converted_td = inverse_rh(rh_ta_df['XR'],to_celsius(rh_ta_df['TA']))
-    converted_td.name = 'value'
-    converted_td_meta = rh_ta_df[['staID','NWS_sid','obs_time','random']]
-    var_col = pd.Series(['TD'])
-    var_col = var_col.repeat(converted_td.shape[0]).reset_index(drop=True)
-    var_col.name = 'var'
-    converted_td = pd.concat([converted_td_meta,var_col,converted_td],axis=1)
-    td_all = pd.concat([td_df,converted_td[td_df.columns]],axis=0)
-    #Drop duplicates
-    td_all = td_all.drop_duplicates(subset=['staID','obs_time']).reset_index(drop=True)
-    uni_stns = td_all[SRC_KEY].unique()
-    td_hour_data = []
-    hour_hst = pd.to_datetime(date_str)+ pd.Timedelta(hours=13)
-    hour_utc = hour_hst + pd.Timedelta(hours=10)
-    hour_st = hour_utc
-    hour_en = hour_utc + pd.Timedelta(hours=1)
-    max_cts = get_max_counts(td_all,uni_stns)
-    date_str = pd.to_datetime(date_str).strftime('X%Y.%m.%d')
-    for stn in uni_stns:
-        if stn in list(max_cts.keys()):
-            stn_df = td_all[td_all[SRC_KEY]==stn]
-            obs_time = pd.to_datetime(stn_df['obs_time'])
-            hour_select = obs_time[(obs_time>hour_st)&(obs_time<=hour_en)]
-            stn_max_count = max_cts[stn]
-            valid_pct = hour_select.shape[0]/stn_max_count
-            td_select = td_all.loc[hour_select.index,'value'].mean()
-            td_hour_data.append([stn,'TD',date_str,td_select,valid_pct])
-    td_hour_df = pd.DataFrame(td_hour_data,columns=[MASTER_KEY,'var','date','value','percent_valid'])
-    #Get TA df in similar fashion
-    ta_df['value'] = ta_df['value'].map(to_celsius)
-    ta_uni = ta_df[SRC_KEY].unique()
-    ta_max_cts = get_max_counts(ta_df,ta_uni)
-    ta_hour_data = []
-    for stn in ta_uni:
-        if stn in list(ta_max_cts.keys()):
-            stn_df = ta_df[ta_df[SRC_KEY]==stn]
-            obs_time = pd.to_datetime(stn_df['obs_time'])
-            hour_select = obs_time[(obs_time>hour_st)&(obs_time<=hour_en)]
-            stn_max_count = ta_max_cts[stn]
-            valid_pct = hour_select.shape[0]/stn_max_count
-            ta_select = ta_df.loc[hour_select.index,'value'].mean()
-            ta_hour_data.append([stn,'TA',date_str,ta_select,valid_pct])
-    ta_hour_df = pd.DataFrame(ta_hour_data,columns=[MASTER_KEY,'var','date','value','percent_valid'])
+    if exists(data_file):
+        if os.stat(data_file).st_size>0:
+            df = pd.read_csv(data_file)
+            #Get pre-existing TD measurements, if any
+            td_df = df[df['var'].isin([TD_VAR])]
+            td_df['value'] = td_df['value'].apply(to_celsius)
+            #(More likely) Convert RH to TD using TA
+            ta_df = df[df['var'].isin([TA_VAR])]
+            rh_df = df[df['var'].isin([RH_VAR])]
+            rh_ta_df = rh_df.merge(ta_df,on=MERGE_COLS,how='inner').rename(columns={'value_x':'XR','value_y':'TA'})
+            converted_td = inverse_rh(rh_ta_df['XR'],to_celsius(rh_ta_df['TA']))
+            converted_td.name = 'value'
+            converted_td_meta = rh_ta_df[['staID','NWS_sid','obs_time','random']]
+            var_col = pd.Series(['TD'])
+            var_col = var_col.repeat(converted_td.shape[0]).reset_index(drop=True)
+            var_col.name = 'var'
+            converted_td = pd.concat([converted_td_meta,var_col,converted_td],axis=1)
+            td_all = pd.concat([td_df,converted_td[td_df.columns]],axis=0)
+            #Drop duplicates
+            td_all = td_all.drop_duplicates(subset=['staID','obs_time']).reset_index(drop=True)
+            uni_stns = td_all[SRC_KEY].unique()
+            td_hour_data = []
+            hour_hst = pd.to_datetime(date_str)+ pd.Timedelta(hours=13)
+            hour_utc = hour_hst + pd.Timedelta(hours=10)
+            hour_st = hour_utc
+            hour_en = hour_utc + pd.Timedelta(hours=1)
+            max_cts = get_max_counts(td_all,uni_stns)
+            date_str = pd.to_datetime(date_str).strftime('X%Y.%m.%d')
+            for stn in uni_stns:
+                if stn in list(max_cts.keys()):
+                    stn_df = td_all[td_all[SRC_KEY]==stn]
+                    obs_time = pd.to_datetime(stn_df['obs_time'])
+                    hour_select = obs_time[(obs_time>hour_st)&(obs_time<=hour_en)]
+                    stn_max_count = max_cts[stn]
+                    valid_pct = hour_select.shape[0]/stn_max_count
+                    td_select = td_all.loc[hour_select.index,'value'].mean()
+                    td_hour_data.append([stn,'TD',date_str,td_select,valid_pct])
+            td_hour_df = pd.DataFrame(td_hour_data,columns=[MASTER_KEY,'var','date','value','percent_valid'])
+            #Get TA df in similar fashion
+            ta_df['value'] = ta_df['value'].map(to_celsius)
+            ta_uni = ta_df[SRC_KEY].unique()
+            ta_max_cts = get_max_counts(ta_df,ta_uni)
+            ta_hour_data = []
+            for stn in ta_uni:
+                if stn in list(ta_max_cts.keys()):
+                    stn_df = ta_df[ta_df[SRC_KEY]==stn]
+                    obs_time = pd.to_datetime(stn_df['obs_time'])
+                    hour_select = obs_time[(obs_time>hour_st)&(obs_time<=hour_en)]
+                    stn_max_count = ta_max_cts[stn]
+                    valid_pct = hour_select.shape[0]/stn_max_count
+                    ta_select = ta_df.loc[hour_select.index,'value'].mean()
+                    ta_hour_data.append([stn,'TA',date_str,ta_select,valid_pct])
+            ta_hour_df = pd.DataFrame(ta_hour_data,columns=[MASTER_KEY,'var','date','value','percent_valid'])
+        else:
+            td_hour_df = pd.DataFrame(columns=[MASTER_KEY,'var','date','value','percent_valid'])
+            ta_hour_df = pd.DataFrame(columns=[MASTER_KEY,'var','date','value','percent_valid'])
+    else:
+        td_hour_df = pd.DataFrame(columns=[MASTER_KEY,'var','date','value','percent_valid'])
+        ta_hour_df = pd.DataFrame(columns=[MASTER_KEY,'var','date','value','percent_valid'])
     return td_hour_df,ta_hour_df
 
 def convert_dataframe(long_df,varname):

@@ -75,9 +75,11 @@ def update_input_file(df,output_file,master_file=META_MASTER_FILE):
     overlap_new_arr = df.loc[overlap_inds,overlap_cols].values
 
     #Replace values where new data is nan with whatever was previously there 
-    new_isnan = np.where(np.isnan(overlap_new_arr))
-    overlap_new_arr[new_isnan] = overlap_old_arr[new_isnan]
-    df.loc[overlap_inds,overlap_cols] = overlap_new_arr
+    #If there is no overlap, do nothing
+    if overlap_new_arr.shape[0] > 0:
+        new_isnan = np.where(np.isnan(overlap_new_arr))
+        overlap_new_arr[new_isnan] = overlap_old_arr[new_isnan]
+        df.loc[overlap_inds,overlap_cols] = overlap_new_arr
     
     #Add new data where relevant. Overwrite old overlapping data
     updated_df.loc[df.index,df.columns] = df
