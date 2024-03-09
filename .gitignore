@@ -1,7 +1,7 @@
-*.tif
-*.tar.gz
-*.csv
-*.txt
-*.dat
-*.xml
+**/*.tif
+**/*.tar.gz
+**/*.csv
+**/*.txt
+**/*.dat
+**/*.xml
 **/__pycache__
