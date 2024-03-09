@@ -1,4 +1,5 @@
 *.tif
+*.tar.gz
 *.csv
 *.txt
 *.dat

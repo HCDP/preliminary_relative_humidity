@@ -1,4 +1,5 @@
 import sys
+import os
 import pytz
 import numpy as np
 import pandas as pd
@@ -112,13 +113,17 @@ def get_hour_td(df,date_str,hour=HOUR_DEFAULT):
     ta_hour_df = pd.DataFrame(ta_hour_data,columns=[MASTER_KEY,'var','date','value','percent_valid'])
     return td_hour_df,ta_hour_df
 
-def convert_dataframe(long_df,varname):
+def convert_dataframe(long_df,varname,date_str):
+    date_fmt = pd.to_datetime(date_str).strftime('X%Y.%m.%d')
     var_df = long_df[long_df['var']==varname]
     valid_df = var_df[var_df['percent_valid']>=0.95]
-    wide_df = pd.DataFrame(index=valid_df[MASTER_KEY].values)
-    for stn in wide_df.index.values:
-        stn_temp = valid_df[valid_df[MASTER_KEY]==stn].set_index('date')[['value']]
-        wide_df.loc[stn,stn_temp.index.values] = stn_temp['value']
+    if valid_df.values.shape[0]<1:
+        wide_df = pd.DataFrame(columns=[date_fmt])
+    else:
+        wide_df = pd.DataFrame(index=valid_df[MASTER_KEY].values)
+        for stn in wide_df.index.values:
+            stn_temp = valid_df[valid_df[MASTER_KEY]==stn].set_index('date')[['value']]
+            wide_df.loc[stn,stn_temp.index.values] = stn_temp['value']
     
     wide_df.index.name = MASTER_KEY
     wide_df = wide_df.reset_index()
@@ -184,10 +189,20 @@ def get_station_sorted_data(date_str,hour=HOUR_DEFAULT):
     date_year = pd.to_datetime(date_str).strftime('%Y')
     date_mon = pd.to_datetime(date_str).strftime('%m')
     source_file = PARSE_DIR + '_'.join((date_code,SOURCE_NAME,'parsed'))+'.csv'
-    df = pd.read_csv(source_file)
-    td_hour_df,ta_hour_df = get_hour_td(df,date_str,hour=hour)
-    td_wide = convert_dataframe(td_hour_df,'TD')
-    ta_wide = convert_dataframe(ta_hour_df,'TA')
+    #if file exists and is not empty, run as normal
+    if exists(source_file):
+        if(os.stat(source_file).st_size>0):
+            df = pd.read_csv(source_file)
+            td_hour_df,ta_hour_df = get_hour_td(df,date_str,hour=hour)
+        else:
+            td_hour_df = pd.DataFrame(columns=[MASTER_KEY,'var','date','value','percent_valid'])
+            ta_hour_df = pd.DataFrame(columns=[MASTER_KEY,'var','date','value','percent_valid'])
+    else:
+        td_hour_df = pd.DataFrame(columns=[MASTER_KEY,'var','date','value','percent_valid'])
+        ta_hour_df = pd.DataFrame(columns=[MASTER_KEY,'var','date','value','percent_valid'])
+    td_wide = convert_dataframe(td_hour_df,'TD',date_str)
+    ta_wide = convert_dataframe(ta_hour_df,'TA',date_str)
+    print(td_wide)
     td_proc_file = PROCESS_DIR + SOURCE_NAME + '/' + '_'.join(('TD',SOURCE_NAME,date_year,date_mon,'processed'))+'.csv'
     ta_proc_file = PROCESS_DIR + SOURCE_NAME + '/' + '_'.join(('TA',SOURCE_NAME,date_year,date_mon,'processed'))+'.csv'
     unknown_ids = update_csv(td_proc_file,td_wide)
