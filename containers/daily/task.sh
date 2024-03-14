@@ -16,32 +16,32 @@ fi
 echo "[task.sh] [2/7] Fetching acquisition data and dependencies."
 #"Fetching acquisition data and dependencies"
 echo "---relhum_wget.py---"
-python3 -W ignore /home/hawaii_climate_products_container/preliminary/relhum/daily/code/relhum_wget.py $AGGREGATION_DATE
+python3.8 -W ignore /home/hawaii_climate_products_container/preliminary/relhum/daily/code/relhum_wget.py $AGGREGATION_DATE
 
 echo "[task.sh] [3/7] Processing acquisition data into aggregated daily data."
 #Processing acquisition data into aggregated daily data
 echo "---hads_td_hour_parse.py---"
-python3 -W ignore /home/hawaii_climate_products_container/preliminary/relhum/daily/code/hads_td_hour_parse.py $AGGREGATION_DATE
+python3.8 -W ignore /home/hawaii_climate_products_container/preliminary/relhum/daily/code/hads_td_hour_parse.py $AGGREGATION_DATE
 echo "---madis_td_hour_parse.py---"
-python3 -W ignore /home/hawaii_climate_products_container/preliminary/relhum/daily/code/madis_td_hour_parse.py $AGGREGATION_DATE
+python3.8 -W ignore /home/hawaii_climate_products_container/preliminary/relhum/daily/code/madis_td_hour_parse.py $AGGREGATION_DATE
 echo "---dewpoint_aggregate_wrapper.py---"
-python3 -W ignore /home/hawaii_climate_products_container/preliminary/relhum/daily/code/dewpoint_aggregate_wrapper.py $AGGREGATION_DATE
+python3.8 -W ignore /home/hawaii_climate_products_container/preliminary/relhum/daily/code/dewpoint_aggregate_wrapper.py $AGGREGATION_DATE
 
 echo "[task.sh] [4/7] Prepping predictor data for mapping workflow."
 #Prepping predictor data for mapping workflow
 echo "---update_predictor_table.py---"
-python3 -W ignore /home/hawaii_climate_products_container/preliminary/relhum/daily/code/update_predictor_table.py $AGGREGATION_DATE
+python3.8 -W ignore /home/hawaii_climate_products_container/preliminary/relhum/daily/code/update_predictor_table.py $AGGREGATION_DATE
 echo "---qaqc.py---"
-python3 -W ignore /home/hawaii_climate_products_container/preliminary/relhum/daily/code/qaqc.py $AGGREGATION_DATE
+python3.8 -W ignore /home/hawaii_climate_products_container/preliminary/relhum/daily/code/qaqc.py $AGGREGATION_DATE
 
 echo "[task.sh] [5/7] Running mapping and metadata workflow."
 #Running mapping and metadata workflow
 echo "---mapping_wrapper.py---"
-python3 -W ignore /home/hawaii_climate_products_container/preliminary/relhum/daily/code/mapping_wrapper.py $AGGREGATION_DATE
+python3.8 -W ignore /home/hawaii_climate_products_container/preliminary/relhum/daily/code/mapping_wrapper.py $AGGREGATION_DATE
 echo "---relhum_state_mapping.py---"
-python3 -W ignore /home/hawaii_climate_products_container/preliminary/relhum/daily/code/relhum_state_mapping.py $AGGREGATION_DATE
+python3.8 -W ignore /home/hawaii_climate_products_container/preliminary/relhum/daily/code/relhum_state_mapping.py $AGGREGATION_DATE
 echo "---meta_wrapper.py---"
-python3 -W ignore /home/hawaii_climate_products_container/preliminary/relhum/daily/code/meta_wrapper.py $AGGREGATION_DATE
+python3.8 -W ignore /home/hawaii_climate_products_container/preliminary/relhum/daily/code/meta_wrapper.py $AGGREGATION_DATE
 
 echo "[task.sh] [6/7] Preparing upload config."
 cd /sync
