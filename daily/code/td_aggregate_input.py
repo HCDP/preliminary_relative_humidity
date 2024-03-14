@@ -87,6 +87,7 @@ def update_input_file(df,output_file,master_file=META_MASTER_FILE):
     #date_strs = updated_df.columns.values
     #refrm_dates = ['X'+'.'.join(dt.split('-')) for dt in date_strs]
     #Any date columns that have all missing data are removed prior to merge
+    print('updated',updated_df)
     updated_df = updated_df.dropna(how='all')
     #updated_df.columns = refrm_dates
     #Connect to master meta by unique index

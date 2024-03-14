@@ -81,7 +81,7 @@ if __name__=='__main__':
     rh_dest_file = LOCAL_RH_QC + '_'.join(('daily','RH',year_str,mon_str,'qc'))+'.csv'
     cmd = ["wget",rh_src_file,"-O",rh_dest_file]
     subprocess.call(cmd)
-    td_src_path = REMOTE_TDTA + r'partial_filled/TD'+year_str+r'/'+mon_str+r'/'
+    td_src_path = REMOTE_TDTA + r'partial_filled/TD/'+year_str+r'/'+mon_str+r'/'
     td_src_file = td_src_path + '_'.join(('daily','TD',year_str,mon_str,'qc'))+'.csv'
     td_dest_file = LOCAL_RH_QC + '_'.join(('daily','TD',year_str,mon_str,'qc'))+'.csv'
     cmd = ["wget",td_src_file,"-O",td_dest_file]
