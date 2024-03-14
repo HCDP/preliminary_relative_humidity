@@ -159,6 +159,7 @@
         },{
             "local_path": "/home/hawaii_climate_products_container/preliminary/relhum/data_outputs/tables/station_data/daily/partial_filled/statewide/daily_TD_%y_%m_qc.csv",
             "remote_path": "HCDP/workflow_data/preliminary/relative_humidity/process_data/tables/station_data/daily/partial_filled/TD/%y/%m",
+
             "rename": "daily_TD_%y_%m_qc.csv",
             "system_id": "ikewai-annotated-data",
             "dir_permissions": [
@@ -169,6 +170,7 @@
                 }
             ]
         },{
+
             "local_path": "/home/hawaii_climate_products_container/preliminary/relhum/data_outputs/tables/station_data/daily/partial_filled/statewide/daily_TD_%y_%m.csv",
             "remote_path": "HCDP/workflow_data/preliminary/relative_humidity/process_data/tables/station_data/daily/raw/TD/%y/%m",
             "rename": "daily_TD_%y_%m.csv",
@@ -182,6 +184,7 @@
             ]
         },{
             "local_path": "/home/hawaii_climate_products_container/preliminary/relhum/working_data/TA_record/daily_TA_%y_%m.csv",
+
             "remote_path": "HCDP/workflow_data/preliminary/relative_humidity/process_data/tables/station_data/daily/raw/TA/%y/%m",
             "rename": "daily_TA_%y_%m.csv",
             "system_id": "ikewai-annotated-data",
