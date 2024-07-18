@@ -132,7 +132,7 @@ def update_csv(new_data,csv_name,date_str=None):
                 upd_df = pd.DataFrame(index=upd_inds)
             upd_df.index.name = 'SKN'
             #Backfill
-            upd_df.loc[old_inds,old_cols] = old_df
+            upd_df.loc[old_checked,old_cols] = old_df
             #Fill new
             upd_df.loc[new_merged.index,new_merged.columns] = new_merged
             #Write new csv
