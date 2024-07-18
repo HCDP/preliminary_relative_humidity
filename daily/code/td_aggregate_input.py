@@ -50,7 +50,7 @@ def update_temp_meta(master_df,temp_df):
     updated_temp = temp_df.merge(master_df,how='inner',on=merge_on_cols)
     return updated_temp
 
-def update_input_file(df,output_file,master_file=META_MASTER_FILE):
+def update_input_file(df,output_file,master_file=META_MASTER_FILE,date_str=None):
     """
     df: dataframe indexed by SKN or other station index code, column keys are date string only, no meta
     """
@@ -64,7 +64,15 @@ def update_input_file(df,output_file,master_file=META_MASTER_FILE):
     
     #Update unique indices with union of previous and new
     updated_inds = np.union1d(data_df.index.values,df.index.values)
-    updated_df = pd.DataFrame(index=updated_inds)
+    #Patch 07/2024: create empty columns for missing days, if specified
+    if date_str != None:
+        current_date = pd.to_datetime(date_str)
+        mon_st = current_date.to_period('M').to_timestamp()
+        days_to_date = pd.date_range(mon_st,current_date)
+        date_cols_fmt = [dt.strftime('X%Y.%m.%d') for dt in days_to_date]
+        updated_df = pd.DataFrame(index=updated_inds,columns=date_cols_fmt)
+    else:
+        updated_df = pd.DataFrame(index=updated_inds)
     updated_df.index.name = IDX_NAME
     #Repopulate new dataframe with old data
     updated_df.loc[data_df.index,data_df.columns] = data_df
@@ -83,20 +91,18 @@ def update_input_file(df,output_file,master_file=META_MASTER_FILE):
     
     #Add new data where relevant. Overwrite old overlapping data
     updated_df.loc[df.index,df.columns] = df
-    
-    #date_strs = updated_df.columns.values
-    #refrm_dates = ['X'+'.'.join(dt.split('-')) for dt in date_strs]
-    #Any date columns that have all missing data are removed prior to merge
-    print('updated',updated_df)
     updated_df = updated_df.dropna(how='all')
-    #updated_df.columns = refrm_dates
+    #Patch 07/2024: now have to account for if the master metadata drops a previously existing SKN...
+    up_to_date_ids = np.intersect1d(updated_df.index.values,meta_df.index.values)
+    #remove anything from updated_df that is not still in meta_df
+    updated_df = updated_df.loc[up_to_date_ids]
     #Connect to master meta by unique index
     meta_df = meta_df.loc[updated_df.index]
     updated_df = meta_df.join(updated_df,how='left')
     
     return updated_df
 
-def aggregate_input(varname,filename,datadir,outdir,master_file=META_MASTER_FILE):
+def aggregate_input(varname,filename,datadir,outdir,master_file=META_MASTER_FILE,date_str=None):
     master_df = pd.read_csv(master_file)
     master_df = master_df.set_index(IDX_NAME)
     full_filename = datadir + filename
@@ -129,7 +135,7 @@ def aggregate_input(varname,filename,datadir,outdir,master_file=META_MASTER_FILE
         if exists(outfile_name):
             #if file exists, make sure it's not empty
             if os.stat(outfile_name).st_size != 0:
-                month_meta = update_input_file(temp_df,outfile_name,master_file)
+                month_meta = update_input_file(temp_df,outfile_name,master_file,date_str=date_str)
                 month_meta = sort_dates(month_meta,meta_cols)
                 month_meta = month_meta.fillna('NA')
                 month_meta = month_meta.reset_index()
