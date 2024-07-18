@@ -103,8 +103,11 @@ def sort_dates(df,meta_cols):
     sorted_df = df[sorted_cols]
     return sorted_df
 
-def update_csv(new_data,csv_name):
+def update_csv(new_data,csv_name,date_str=None):
     #Add metadata
+    #cross check new data with master meta, exclude invalid stations
+    new_checked = np.intersect1d(new_data.index.values,MASTER_DF.set_index('SKN').index.values)
+    new_data = new_data.loc[new_checked]
     new_meta = MASTER_DF.set_index('SKN').loc[new_data.index]
     new_merged = new_meta.join(new_data,how='left')
 
@@ -114,8 +117,19 @@ def update_csv(new_data,csv_name):
             old_df = old_df.set_index('SKN')
             old_inds = old_df.index.values
             old_cols = list(old_df.columns)
-            upd_inds = np.union1d(old_inds,new_merged.index.values)
-            upd_df = pd.DataFrame(index=upd_inds)
+            #Cross check old SKNs to make sure prior invalids don't repopulate
+            old_checked = np.intersect1d(old_inds,MASTER_DF.set_index('SKN').index.values)
+            old_df = old_df.loc[old_checked]
+            upd_inds = np.union1d(old_checked,new_merged.index.values)
+            #Patch 07/2024: include all dates even if empty
+            if date_str != None:
+                current_day =pd.to_datetime(date_str)
+                mon_st = current_day.to_period('M').to_timestamp()
+                days_to_date = pd.date_range(mon_st,current_day)
+                date_col_fmt = [dt.strftime('X%Y.%m.%d') for dt in days_to_date]
+                upd_df = pd.DataFrame(index=upd_inds,columns=date_col_fmt)
+            else:
+                upd_df = pd.DataFrame(index=upd_inds)
             upd_df.index.name = 'SKN'
             #Backfill
             upd_df.loc[old_inds,old_cols] = old_df
@@ -247,7 +261,7 @@ def raw_rh_file(date_str):
     else:
         rh = pd.Series(name=date_fmt)
     rh_file = INPUT_DATA_DIR + '_'.join(('daily','RH',year_str,mon_str))+'.csv'
-    update_csv(rh,rh_file)
+    update_csv(rh,rh_file,date_str=date_str)
 
 
 def qaqc(date_str):
@@ -321,14 +335,14 @@ def qaqc(date_str):
     else:
         rh = pd.Series(name=date_fmt)
     rh_file = OUTPUT_DATA_DIR + '_'.join(('daily','RH',year_str,mon_str,'qc'))+'.csv'
-    update_csv(rh,rh_file)
+    update_csv(rh,rh_file,date_str=date_str)
     #td_day is either empty series or it's filtered and partially filled
     #update the qc csv with qced td_day
     #also create a qc flag file with the same indices as td_filled
     output_file = OUTPUT_DATA_DIR + '_'.join(('daily','TD',year_str,mon_str,'qc'))+'.csv'
     flag_file = OUTPUT_FLAG_DIR + '_'.join(('daily','TD',year_str,mon_str,'flag'))+'.csv'
-    update_csv(td_day,output_file)
-    update_csv(td_final_flags,flag_file)
+    update_csv(td_day,output_file,date_str=date_str)
+    update_csv(td_final_flags,flag_file,date_str=date_str)
 
         
     

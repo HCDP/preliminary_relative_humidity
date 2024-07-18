@@ -43,7 +43,9 @@ if __name__=="__main__":
     new_station_data = new_station_data.set_index('SKN')
     all_stn_inds = new_station_data.index.values
 
-    new_stns = np.setdiff1d(all_stn_inds,old_inds)
+    unchecked_new_stns = np.setdiff1d(all_stn_inds,old_inds)
+    #Patch 07/2024: ensure no invalid stations pass through
+    new_stns = np.intersect1d(unchecked_new_stns,master_df.index.values)
     if new_stns.shape[0] < 1:
         pass
     else:

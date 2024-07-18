@@ -69,10 +69,10 @@ if __name__=='__main__':
         proc_ta_file_name = '_'.join(('TA',src,year,mon,'processed'))+'.csv'
         #[SET_DIR]
         source_processed_dir = PROC_DATA_DIR + src + '/'
-        td_agg_df,td_stns = aggregate_input(VARNAME,proc_td_file_name,source_processed_dir,AGG_OUTPUT_DIR,META_MASTER_FILE)
+        td_agg_df,td_stns = aggregate_input(VARNAME,proc_td_file_name,source_processed_dir,AGG_OUTPUT_DIR,META_MASTER_FILE,date_str=date_str)
         td_stns_by_src[src] = td_stns
         #aggregate TA
-        ta_agg_df,ta_stns = aggregate_input('TA',proc_ta_file_name,source_processed_dir,TA_OUTPUT_DIR,META_MASTER_FILE)
+        ta_agg_df,ta_stns = aggregate_input('TA',proc_ta_file_name,source_processed_dir,TA_OUTPUT_DIR,META_MASTER_FILE,date_str=date_str)
         
     td_count_file = TRACK_DIR + '_'.join(('count_log_daily_TD',year,mon)) + '.csv'
     get_daily_count(td_count_file,td_stns_by_src,date_str)

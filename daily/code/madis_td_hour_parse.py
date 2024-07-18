@@ -202,7 +202,6 @@ def get_station_sorted_data(date_str,hour=HOUR_DEFAULT):
         ta_hour_df = pd.DataFrame(columns=[MASTER_KEY,'var','date','value','percent_valid'])
     td_wide = convert_dataframe(td_hour_df,'TD',date_str)
     ta_wide = convert_dataframe(ta_hour_df,'TA',date_str)
-    print(td_wide)
     td_proc_file = PROCESS_DIR + SOURCE_NAME + '/' + '_'.join(('TD',SOURCE_NAME,date_year,date_mon,'processed'))+'.csv'
     ta_proc_file = PROCESS_DIR + SOURCE_NAME + '/' + '_'.join(('TA',SOURCE_NAME,date_year,date_mon,'processed'))+'.csv'
     unknown_ids = update_csv(td_proc_file,td_wide)
