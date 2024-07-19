@@ -5,7 +5,8 @@
         "retry": 3
     },
     "data": [
-        {   "replace_duplicates": false,
+        {   
+            "replace_duplicates": true,
             "data_col_start": 13,
             "id_col": 0,
             "nodata": "NA",
