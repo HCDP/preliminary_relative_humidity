@@ -44,7 +44,7 @@ python3.8 -W ignore /home/hawaii_climate_products_container/preliminary/relhum/d
 
 echo "[task.sh] [6/7] Preparing upload config."
 cd /sync
-python3 update_date_string_in_config.py upload_config.json upload_config_datestrings_loaded.json $CUSTOM_DATE
+python3 update_date_string_in_config.py upload.json upload_config_datestrings_loaded.json $CUSTOM_DATE
 python3 add_upload_list_to_config.py upload_config_datestrings_loaded.json config.json
 python3 add_auth_info_to_config.py config.json
 
