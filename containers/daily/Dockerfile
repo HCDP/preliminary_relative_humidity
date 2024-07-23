@@ -7,7 +7,7 @@ RUN mkdir -p /home/hawaii_climate_products_container/preliminary/relhum/daily
 ADD /daily /home/hawaii_climate_products_container/preliminary/relhum/daily
 
 # Add the upload config
-ADD /containers/daily/configs/upload.json /sync/upload.json
+ADD /containers/daily/configs/upload.json /sync/config.json
 
 # Add the task wrapper script.
 ADD /containers/daily/task.sh /actor/task.sh
