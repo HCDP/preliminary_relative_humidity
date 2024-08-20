@@ -229,7 +229,7 @@ def format_metadata(metrics,dt,icode):
     data_statement = ' '.join((intro_fmt,method_fmt1,gapfill_fmt,method_fmt2,rsq_fmt,err_text))
 
     kw_list = ', '.join([FORMAL_NAME[icode],'Hawaii',' humidity prediction','daily relative humidity','relative humidity','climate','linear regression'])
-    credit_statement = 'All data produced by University of Hawaii at Manoa Dept. of Geography and the Enviroment, Ecohydology Lab in collaboration with the Water Resource Research Center (WRRC). Support for the Hawai‘i EPSCoR Program is provided by the Hawaii Emergency Management Agency.'
+    credit_statement = 'All data are produced by the University of Hawai‘i at Manoa with the Water Resources Research Center (WRRC) and the Dept. of Geography and the Environment Ecohydrology Lab. This work is supported by the ChangeHI program, funded by NSF EPSCoR Research Infrastructure Improvement Award OIA-2149133.'
     contact_list = 'Keri Kodama (kodamak8@hawaii.edu), Matthew Lucas (mplucas@hawaii.edu), Ryan Longman (rlongman@hawaii.edu), Sayed Bateni (smbateni@hawaii.edu), Thomas Giambelluca (thomas@hawaii.edu)'
 
     field_val_list = {'attribute':'value','dataStatement':data_statement,'keywords':kw_list,
