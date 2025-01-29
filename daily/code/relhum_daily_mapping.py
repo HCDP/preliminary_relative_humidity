@@ -138,7 +138,7 @@ def output_tiff(df_data,base_tiff,tiff_filename,shape):
 
     # arr_out = np.where((arr < arr_mean), -100000, arr)
     driver = gdal.GetDriverByName("GTiff")
-    outdata = driver.Create(tiff_filename, rows, cols, 1, gdal.GDT_Float32)
+    outdata = driver.Create(tiff_filename, rows, cols, 1, gdal.GDT_Float32, options = ["COMPRESS=LZW"])
     # sets same geotransform as input
     outdata.SetGeoTransform(ds.GetGeoTransform())
     outdata.SetProjection(ds.GetProjection())  # sets same projection as input
