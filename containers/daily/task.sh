@@ -1,10 +1,13 @@
 #!/bin/bash
 
 #!/bin/bash
+
+set -u
+
 echo "[task.sh] [1/7] Starting Execution."
 export TZ="HST"
 echo "It is currently $(date)."
-if [ $CUSTOM_DATE ]; then
+if [[ -v CUSTOM_DATE ]]; then
     echo "An aggregation date was provided by the environment."
 else
     export CUSTOM_DATE=$(date -d "1 day ago" --iso-8601)
@@ -25,6 +28,8 @@ echo "---madis_td_hour_parse.py---"
 python3.8 -W ignore /home/hawaii_climate_products_container/preliminary/relhum/daily/code/madis_td_hour_parse.py $CUSTOM_DATE
 echo "---dewpoint_aggregate_wrapper.py---"
 python3.8 -W ignore /home/hawaii_climate_products_container/preliminary/relhum/daily/code/dewpoint_aggregate_wrapper.py $CUSTOM_DATE
+
+set -eo pipefail
 
 echo "[task.sh] [4/7] Prepping predictor data for mapping workflow."
 #Prepping predictor data for mapping workflow
